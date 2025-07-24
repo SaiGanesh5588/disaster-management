@@ -7,7 +7,17 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+    origin: [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://hurtsproject.netlify.app",
+        /\.netlify\.app$/
+    ],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB Connection
@@ -65,3 +75,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
