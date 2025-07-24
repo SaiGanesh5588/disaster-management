@@ -21,11 +21,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log("MongoDB Connected Successfully"))
-  .catch((error) => console.error("MongoDB Connection Failed:", error));
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB Connected Successfully"))
+.catch((error) => console.error("MongoDB Connection Failed:", error));
 
 // 👉 Donation Schema
 const donationSchema = new mongoose.Schema({
