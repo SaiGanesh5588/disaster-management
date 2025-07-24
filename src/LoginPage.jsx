@@ -54,7 +54,7 @@ const LoginPage = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/signup", {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password }),
@@ -80,7 +80,7 @@ const LoginPage = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/login", {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
