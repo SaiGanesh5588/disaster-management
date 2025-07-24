@@ -21,7 +21,8 @@ router.post("/signup", async (req, res) => {
     const token = jwt.sign({ id: newUser._id, email }, JWT_SECRET, { expiresIn: "1h" });
     res.json({ token });
   } catch (err) {
-    res.status(500).json({ err });
+    console.error("Signup Error:", err);
+    res.status(500).json({ error: "Signup failed: " + err.message });
   }
 });
 
@@ -44,3 +45,4 @@ router.post("/login", async (req, res) => {
 });
 
 module.exports = router;
+
