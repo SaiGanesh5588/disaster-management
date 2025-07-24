@@ -99,17 +99,16 @@
 }
 
 /* Main Content */
-.main-content {
+.stats-content {
   flex: 1;
-  margin-left: 280px;
-  padding: 2rem;
+  margin-left: 0;
+  padding: 1.5rem;
   background: #F7FAFC;
   min-height: 100vh;
   overflow-y: auto;
-  width: calc(100% - 280px);
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 /* Content Header */
@@ -138,12 +137,39 @@
   font-weight: 400;
 }
 
+/* Stats Header */
+.stats-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.stats-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1A202C;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stats-subtitle {
+  font-size: 1.125rem;
+  color: #4A5568;
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .stat-card {
@@ -478,59 +504,84 @@
 
 @media (max-width: 768px) {
   .stats-container {
-    padding: 20px;
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+  
+  .stats-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .stats-header {
+    text-align: center;
+    padding: 1rem;
   }
   
   .stats-title {
-    font-size: 32px;
+    font-size: 2rem;
   }
   
   .stats-subtitle {
-    font-size: 16px;
+    font-size: 1rem;
   }
   
   .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 100%;
   }
   
   .stat-card {
-    padding: 24px 20px;
+    padding: 20px 16px;
     flex-direction: column;
     text-align: center;
-    gap: 16px;
+    gap: 12px;
   }
   
   .stat-icon {
-    width: 64px;
-    height: 64px;
-    font-size: 32px;
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
   }
   
   .stat-number {
-    font-size: 28px;
+    font-size: 24px;
+  }
+  
+  .stat-title {
+    font-size: 14px;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   
   .chart-container,
   .activity-container {
-    padding: 24px 20px;
+    padding: 20px 16px;
   }
   
   .chart-title {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .summary-section {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 1rem;
   }
   
   .summary-card {
-    padding: 24px 20px;
+    padding: 20px 16px;
   }
   
   .metric-value {
-    font-size: 36px;
+    font-size: 32px;
   }
 }
 

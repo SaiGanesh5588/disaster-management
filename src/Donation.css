@@ -103,17 +103,16 @@
 /* Main Content */
 .main-content {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 0;
   padding: 1.5rem;
   background: #F7FAFC;
   min-height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  width: calc(100vw - 280px);
-  max-width: calc(100vw - 280px);
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   box-sizing: border-box;
   position: relative;
 }
@@ -181,8 +180,8 @@
   gap: 1.5rem;
   margin-bottom: 2rem;
   width: 100%;
-  max-width: 1000px;
-  padding: 0 1rem;
+  max-width: 1200px;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -690,52 +689,58 @@
     gap: 16px;
   }
   
-  .tab-navigation {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .tab-navigation {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .tab-btn {
-    width: 100%;
-    max-width: 300px;
+  .category-card {
+    padding: 16px;
+    min-height: 160px;
   }
   
   .donation-form {
-    padding: 24px;
+    padding: 20px;
+    margin: 0 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .donation-container {
-    padding: 16px;
+    padding: 12px;
   }
   
   .page-title {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   .page-subtitle {
-    font-size: 16px;
+    font-size: 14px;
   }
   
   .stat-card {
-    padding: 20px 16px;
+    padding: 16px 12px;
+  }
+  
+  .stat-value {
+    font-size: 24px;
+  }
+  
+  .stat-title {
+    font-size: 12px;
+  }
+  
+  .tab-btn {
+    padding: 10px 14px;
+    font-size: 12px;
   }
   
   .category-card {
-    padding: 16px;
+    padding: 12px;
+    min-height: 140px;
   }
   
   .donation-form {
-    padding: 20px;
+    padding: 16px;
+    margin: 0 0.5rem;
   }
 }
-  
+
   /* Input fields */
   .donation-form input,
   .donation-form select,
