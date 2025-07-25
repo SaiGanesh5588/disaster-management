@@ -98,7 +98,22 @@ app.post("/api/donations", async (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Server Error:', err);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+});
+
+// Start the server
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
+    console.log('Allowed Origins:', allowedOrigins);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled Rejection:', err);
+    server.close(() => process.exit(1));
 });
 

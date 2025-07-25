@@ -1,17 +1,24 @@
 [phases.setup]
-nixPkgs = ['nodejs-18.x', 'npm']
+nixPkgs = ['nodejs-18.x', 'nodePackages.npm']
 
 [phases.install]
-cmds = ['npm install']
+cmds = ['cd backend && npm install']
 
 [phases.build]
-cmds = ['echo "No build step required"']
+cmds = ['echo "Building backend..."']
 
 [start]
-cmd = 'node server.js'
+cmd = 'cd backend && node server.js'
 
 [build.environment]
 NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "false"
 
 [build.args]
 RAILWAY_ENVIRONMENT = "production"
+
+[build.install]
+run = "cd backend && npm install"
+
+[build.build]
+run = "echo 'Build complete'"
