@@ -9,21 +9,32 @@ dotenv.config();
 const app = express();
 
 // CORS Configuration
-const corsOptions = {
-    origin: [
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'https://hurtsproject.netlify.app',
-        'https://disaster-management-backend-production.up.railway.app'
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With'],
-    preflightContinue: false,
-    optionsSuccessStatus: 200
-};
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://hurtsproject.netlify.app',
+    'https://disaster-management-backend-production.up.railway.app'
+];
 
-app.use(cors(corsOptions));
+// CORS middleware
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    
+    // Allow requests with or without origin (like mobile apps, curl, etc.)
+    if (!origin || allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin || '*');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+        res.header('Access-Control-Allow-Credentials', true);
+    }
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    
+    next();
+});
 
 // Parse JSON bodies
 app.use(express.json());

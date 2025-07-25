@@ -51,24 +51,27 @@ export const apiRequest = async (endpoint, options = {}) => {
       mode: 'cors'
     });
 
-    return await handleResponse(response);
+    // Handle non-successful responses
     if (!response.ok) {
       let errorData;
-      try {
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
         errorData = await response.json();
-      } catch (e) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      } else {
+        const text = await response.text();
+        throw new Error(text || `HTTP error! status: ${response.status}`);
       }
-      throw new Error(errorData.message || 'Something went wrong');
     }
 
-    // Handle empty responses
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    // Handle successful responses
+    const responseContentType = response.headers.get('content-type');
+    if (responseContentType && responseContentType.includes('application/json')) {
       return await response.json();
     }
     
-    return {}; // For non-JSON responses
+    return await response.text() || {};
   } catch (error) {
     console.error('API request failed:', error);
     throw error;
