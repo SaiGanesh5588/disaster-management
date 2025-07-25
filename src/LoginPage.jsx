@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import myimg from "./assets/hpic.jpg";
+import { apiRequest } from "./utils/api";
 
 const LoginPage = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -21,22 +22,16 @@ const LoginPage = () => {
     }
     
     try {
-      // Simulate API call for password reset
-      const response = await fetch("/api/auth/forgot-password", {
+      await apiRequest("/api/auth/forgot-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
       
-      if (response.ok) {
-        alert("Password reset link has been sent to your email address!");
-        setIsForgotPassword(false);
-        setEmail("");
-      } else {
-        alert("Email not found. Please check your email address.");
-      }
+      alert("Password reset link has been sent to your email address!");
+      setIsForgotPassword(false);
+      setEmail("");
     } catch (error) {
-      alert("Network error. Please try again later.");
+      alert(error.message || "Failed to send reset email. Please try again.");
     }
   };
 
@@ -54,24 +49,21 @@ const LoginPage = () => {
       }
 
       try {
-        const res = await fetch('/api/signup', {
+        const data = await apiRequest("/api/signup", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password }),
         });
 
-        const data = await res.json();
-
-        if (res.ok) {
-          localStorage.setItem("token", data.token); // ✅ Store token
+        if (data.token) {
+          localStorage.setItem("token", data.token);
           alert("Signup Successful!");
           navigate("/home");
         } else {
-          alert(data.error || "Signup failed");
+          throw new Error("No token received");
         }
       } catch (error) {
         console.error("Signup Error:", error);
-        alert("Something went wrong during signup.");
+        alert(error.message || "Signup failed. Please try again.");
       }
     } else {
       if (!email || !password) {
@@ -80,24 +72,21 @@ const LoginPage = () => {
       }
 
       try {
-        const res = await fetch('/api/login', {
+        const data = await apiRequest("/api/login", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         });
 
-        const data = await res.json();
-
-        if (res.ok) {
-          localStorage.setItem("token", data.token); // ✅ Store token
+        if (data.token) {
+          localStorage.setItem("token", data.token);
           alert("Login Successful!");
           navigate("/home");
         } else {
-          alert(data.error || "Login failed");
+          throw new Error("No token received");
         }
       } catch (error) {
         console.error("Login Error:", error);
-        alert("Something went wrong during login.");
+        alert(error.message || "Login failed. Please check your credentials and try again.");
       }
     }
   };

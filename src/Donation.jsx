@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Donation.css";
 import myimg from "./assets/h1pic.jpg";
+import { apiRequest } from "./utils/api";
 
 const Donation = () => {
   const [activeTab, setActiveTab] = useState('donate');
@@ -161,24 +162,14 @@ const Donation = () => {
     setLoading(true);
     
     try {
-      const response = await fetch('/api/donations', {
+      const data = await apiRequest("/api/donations", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
       console.log("Response from server:", data);
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
       alert("🎉 Thank you for your generous donation! Your contribution will make a real difference in helping those in need.");
       
-      // Reset form
       setFormData({
         name: "",
         donationType: "",
@@ -189,13 +180,12 @@ const Donation = () => {
         contact: "",
       });
       setSelectedCategory(null);
-      
     } catch (error) {
-      console.error("Error submitting donation:", error);
-      alert("Failed to submit donation. Please try again.");
+      console.error("Donation submission error:", error);
+      alert(error.message || "Failed to submit donation. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const formatNumber = (num) => {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Volunteers.css";
+import { apiRequest } from "./utils/api";
 
 const Volunteers = () => {
   const [activeTab, setActiveTab] = useState('join');
@@ -88,33 +89,30 @@ const Volunteers = () => {
   const handleJoinVolunteers = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/volunteers/add", {
+      await apiRequest("/api/volunteers/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newVolunteer),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Welcome to our volunteer community! 🎉");
-        setNewVolunteer({
-          name: "",
-          email: "",
-          phone: "",
-          location: "",
-          age: "",
-          skills: "",
-          availability: "",
-          experience: ""
-        });
-      } else {
-        alert(`Registration failed: ${data.message}`);
-      }
+      // If we get here, the request was successful
+      alert("Welcome to our volunteer community! 🎉");
+      setNewVolunteer({
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        age: "",
+        skills: "",
+        availability: "",
+        experience: "",
+      });
+      setActiveTab('browse');
     } catch (error) {
-      alert("Server Error! Please try again.");
+      console.error("Error joining volunteers:", error);
+      alert(error.message || "Failed to join as a volunteer. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const filteredVolunteers = volunteers.filter(volunteer =>

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
+const volunteerRoutes = require("./routes/volunteerRoutes");
 
 dotenv.config();
 const app = express();
@@ -49,7 +50,8 @@ app.get("/api/test", (req, res) => {
 });
 
 // API Routes
-app.use("/api", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/volunteers", volunteerRoutes);
 
 // Handle 404 for API routes
 app.use("/api/*", (req, res) => {
