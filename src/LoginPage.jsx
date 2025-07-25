@@ -22,7 +22,7 @@ const LoginPage = () => {
     
     try {
       // Simulate API call for password reset
-      const response = await fetch("http://127.0.0.1:5000/api/auth/forgot-password", {
+      const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -54,7 +54,7 @@ const LoginPage = () => {
       }
 
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/signup`, {
+        const res = await fetch('/api/signup', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password }),
@@ -80,7 +80,7 @@ const LoginPage = () => {
       }
 
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/login`, {
+        const res = await fetch('/api/login', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

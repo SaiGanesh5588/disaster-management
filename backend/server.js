@@ -9,19 +9,39 @@ const app = express();
 
 // Middleware
 const corsOptions = {
-    origin: [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://hurtsproject.netlify.app",
-        /\.netlify\.app$/,
-        /\.railway\.app$/
-    ],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'https://hurtsproject.netlify.app',
+            'https://hurtsproject.netlify.app/',
+            'https://disaster-management-backend-production.up.railway.app'
+        ];
+        
+        // Check if the origin is in the allowed origins
+        if (allowedOrigins.includes(origin) || 
+            /^https?:\/\/[^\s]+\.netlify\.app(\/.*)?$/.test(origin) ||
+            /^https?:\/\/[^\s]+\.railway\.app(\/.*)?$/.test(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range']
 };
+
+// Apply CORS with the options
 app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Handle preflight requests
