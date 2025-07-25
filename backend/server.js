@@ -40,15 +40,21 @@ const corsOptions = {
 // Apply CORS with the options
 app.use(cors(corsOptions));
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Parse JSON bodies
 app.use(express.json());
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Test route
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working!" });
+});
 
-// Routes
+// API Routes
 app.use("/api", authRoutes);
+
+// Handle 404 for API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ error: "API endpoint not found" });
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
