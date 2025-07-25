@@ -1,8 +1,27 @@
-// Determine the base URL for API requests
+// Base URL configuration
 const isProduction = import.meta.env.PROD;
 const baseURL = isProduction 
-  ? import.meta.env.VITE_API_BASE_URL || 'https://disaster-management-backend-production.up.railway.app'
-  : ''; // In development, we'll use relative URLs with the proxy
+  ? (import.meta.env.VITE_API_BASE_URL || 'https://disaster-management-backend-production.up.railway.app')
+  : 'http://localhost:5000'; // Local development server
+
+// Helper to handle response
+const handleResponse = async (response) => {
+  const contentType = response.headers.get('content-type');
+  
+  if (contentType && contentType.includes('application/json')) {
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Something went wrong');
+    }
+    return data;
+  }
+  
+  const text = await response.text();
+  if (!response.ok) {
+    throw new Error(text || 'Something went wrong');
+  }
+  return text;
+};
 
 /**
  * Makes an API request with proper error handling
@@ -19,15 +38,20 @@ export const apiRequest = async (endpoint, options = {}) => {
     ...(options.headers || {})
   };
 
+  // Handle request body
+  const body = options.body ? JSON.stringify(options.body) : undefined;
+
   try {
     const response = await fetch(url, {
       ...options,
+      method: options.method || 'GET',
       headers,
-      // Include credentials for CORS
-      credentials: 'include'
+      body,
+      credentials: 'include',
+      mode: 'cors'
     });
 
-    // Handle non-2xx responses
+    return await handleResponse(response);
     if (!response.ok) {
       let errorData;
       try {

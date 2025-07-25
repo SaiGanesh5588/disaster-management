@@ -8,38 +8,31 @@ const volunteerRoutes = require("./routes/volunteerRoutes");
 dotenv.config();
 const app = express();
 
-// Middleware
-const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        const allowedOrigins = [
-            'http://localhost:3000',
-            'http://localhost:5173',
-            'https://hurtsproject.netlify.app',
-            'https://hurtsproject.netlify.app/',
-            'https://disaster-management-backend-production.up.railway.app'
-        ];
-        
-        // Check if the origin is in the allowed origins
-        if (allowedOrigins.includes(origin) || 
-            /^https?:\/\/[^\s]+\.netlify\.app(\/.*)?$/.test(origin) ||
-            /^https?:\/\/[^\s]+\.railway\.app(\/.*)?$/.test(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With'],
-    exposedHeaders: ['Content-Range', 'X-Content-Range']
-};
-
-// Apply CORS with the options
-app.use(cors(corsOptions));
+// CORS Middleware
+app.use((req, res, next) => {
+    const allowedOrigins = [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://hurtsproject.netlify.app',
+        'https://disaster-management-backend-production.up.railway.app'
+    ];
+    
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin) || !origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    }
+    
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', true);
+    
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    
+    next();
+});
 
 // Parse JSON bodies
 app.use(express.json());
