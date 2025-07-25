@@ -8,31 +8,22 @@ const volunteerRoutes = require("./routes/volunteerRoutes");
 dotenv.config();
 const app = express();
 
-// CORS Middleware
-app.use((req, res, next) => {
-    const allowedOrigins = [
+// CORS Configuration
+const corsOptions = {
+    origin: [
         'http://localhost:3000',
         'http://localhost:5173',
         'https://hurtsproject.netlify.app',
         'https://disaster-management-backend-production.up.railway.app'
-    ];
-    
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin) || !origin) {
-        res.setHeader('Access-Control-Allow-Origin', origin || '*');
-    }
-    
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    res.header('Access-Control-Allow-Credentials', true);
-    
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
-    }
-    
-    next();
-});
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length', 'X-Requested-With'],
+    preflightContinue: false,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Parse JSON bodies
 app.use(express.json());
@@ -43,7 +34,7 @@ app.get("/api/test", (req, res) => {
 });
 
 // API Routes
-app.use("/api/auth", authRoutes);
+app.use("/api", authRoutes);
 app.use("/api/volunteers", volunteerRoutes);
 
 // Handle 404 for API routes
@@ -92,12 +83,7 @@ app.post("/api/donations", async (req, res) => {
     }
 });
 
-// 👉 Routes
-const volunteerRoutes = require("./routes/volunteerRoutes");
-const authRoutes = require("./routes/authRoutes"); // ✅ NEW
 
-app.use("/api/volunteers", volunteerRoutes);
-app.use("/api", authRoutes); // ✅ NEW
 
 // Start Server
 const PORT = process.env.PORT || 5000;
