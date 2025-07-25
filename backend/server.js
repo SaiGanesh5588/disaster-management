@@ -8,31 +8,41 @@ const volunteerRoutes = require("./routes/volunteerRoutes");
 dotenv.config();
 const app = express();
 
-// CORS Configuration
-const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://hurtsproject.netlify.app',
-    'https://disaster-management-backend-production.up.railway.app'
-];
+// CORS Configuration - More permissive for development
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // List of allowed origins
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'https://hurtsproject.netlify.app',
+            'https://disaster-management-backend-production.up.railway.app',
+            'https://hurtsproject.netlify.app/' // Add trailing slash variant
+        ];
+        
+        // Check if the origin is in the allowed list or if it's a development environment
+        if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+            callback(null, true);
+        } else {
+            console.log('Blocked CORS for origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
 
-// CORS middleware
+// Log all incoming requests for debugging
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    
-    // Allow requests with or without origin (like mobile apps, curl, etc.)
-    if (!origin || allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin || '*');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-        res.header('Access-Control-Allow-Credentials', true);
-    }
-    
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`, {
+        headers: req.headers,
+        body: req.body
+    });
     next();
 });
 

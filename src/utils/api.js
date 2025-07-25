@@ -4,37 +4,25 @@ const baseURL = isProduction
   ? (import.meta.env.VITE_API_BASE_URL || 'https://disaster-management-backend-production.up.railway.app')
   : 'http://localhost:5000'; // Local development server
 
-// Helper to handle response
-const handleResponse = async (response) => {
-  const contentType = response.headers.get('content-type');
-  
-  if (contentType && contentType.includes('application/json')) {
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong');
-    }
-    return data;
-  }
-  
-  const text = await response.text();
-  if (!response.ok) {
-    throw new Error(text || 'Something went wrong');
-  }
-  return text;
+// Add trailing slash to baseURL if not present
+const getFullUrl = (endpoint) => {
+  const base = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+  const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  return `${base}${path}`;
 };
 
 /**
  * Makes an API request with proper error handling
- * @param {string} endpoint - The API endpoint (e.g., '/api/login')
+ * @param {string} endpoint - The API endpoint (e.g., 'api/login')
  * @param {Object} options - Fetch options (method, headers, body, etc.)
  */
 export const apiRequest = async (endpoint, options = {}) => {
-  // Ensure endpoint starts with a slash
-  const url = `${baseURL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+  const url = getFullUrl(endpoint);
   
   // Set default headers
   const headers = {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
     ...(options.headers || {})
   };
 
@@ -42,27 +30,38 @@ export const apiRequest = async (endpoint, options = {}) => {
   const body = options.body ? JSON.stringify(options.body) : undefined;
 
   try {
+    console.log(`API Request: ${options.method || 'GET'} ${url}`);
+    
     const response = await fetch(url, {
       ...options,
       method: options.method || 'GET',
       headers,
       body,
       credentials: 'include',
-      mode: 'cors'
+      mode: 'cors',
+      cache: 'no-cache',
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer'
     });
+
+    console.log(`API Response Status: ${response.status} ${response.statusText}`);
 
     // Handle non-successful responses
     if (!response.ok) {
-      let errorData;
-      const contentType = response.headers.get('content-type');
-      
-      if (contentType && contentType.includes('application/json')) {
-        errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      } else {
-        const text = await response.text();
-        throw new Error(text || `HTTP error! status: ${response.status}`);
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } else {
+          const text = await response.text();
+          errorMessage = text || errorMessage;
+        }
+      } catch (e) {
+        console.error('Error parsing error response:', e);
       }
+      throw new Error(errorMessage);
     }
 
     // Handle successful responses
