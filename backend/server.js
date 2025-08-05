@@ -47,9 +47,10 @@ const corsOptions = {
         /^https?:\/\/disaster-management-[a-z0-9]+\.railway\.app$/, // Railway deployment
         /^https?:\/\/disaster-management-[a-z0-9]+-[a-z0-9]+\.railway\.app$/, // Railway previews
         /^https?:\/\/.*\.onrender\.com$/, // All Render subdomains
-        /^https?:\/\/disaster-management-[a-z0-9]+\.onrender\.com$/ // Specific Render deployment
+        /^https?:\/\/disaster-management-[a-z0-9]+\.onrender\.com$/, // Specific Render deployment
+        'https://hurtsproject.netlify.app' // Netlify frontend
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true,
     optionsSuccessStatus: 200 // Some legacy browsers choke on 204
