@@ -1,8 +1,8 @@
 // This file is the entry point for Render
 // It simply imports and starts the backend server
 
-// Set the working directory to the backend folder
-process.chdir(__dirname + '/backend');
+// Load environment variables first
+require('dotenv').config({ path: __dirname + '/backend/.env' });
 
 // Start the server
-require('./server');
+require('./backend/server');
