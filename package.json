@@ -2,7 +2,7 @@
   "name": "disaster-management",
   "version": "1.0.0",
   "description": "Disaster Management System with React Frontend and Node.js Backend",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "client": "cd frontend && npm run dev",
