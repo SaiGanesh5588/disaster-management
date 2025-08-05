@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const cors = require("cors");
+const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
@@ -45,12 +45,14 @@ const corsOptions = {
         'http://localhost:5173', // Vite frontend
         'http://127.0.0.1:5173', // Vite frontend
         /^https?:\/\/disaster-management-[a-z0-9]+\.railway\.app$/, // Railway deployment
-        /^https?:\/\/disaster-management-[a-z0-9]+-[a-z0-9]+\.railway\.app$/ // Railway previews
+        /^https?:\/\/disaster-management-[a-z0-9]+-[a-z0-9]+\.railway\.app$/, // Railway previews
+        /^https?:\/\/.*\.onrender\.com$/, // All Render subdomains
+        /^https?:\/\/disaster-management-[a-z0-9]+\.onrender\.com$/ // Specific Render deployment
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -184,7 +186,7 @@ const startServer = async () => {
     try {
         await connectDB();
         
-        const PORT = process.env.PORT || 5000;
+        const PORT = process.env.PORT || 10000; // Render uses 10000 by default
         const HOST = process.env.HOST || '0.0.0.0';
         
         const server = app.listen(PORT, HOST, () => {
