@@ -36,20 +36,41 @@ app.use((req, res, next) => {
 });
 
 // CORS configuration
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://localhost:5173', // Vite frontend
+    'http://127.0.0.1:5173', // Vite frontend
+    /^https?:\/\/disaster-management-[a-z0-9]+\.railway\.app$/, // Railway deployment
+    /^https?:\/\/disaster-management-[a-z0-9]+-[a-z0-9]+\.railway\.app$/, // Railway previews
+    /^https?:\/\/.*\.onrender\.com$/, // All Render subdomains
+    /^https?:\/\/disaster-management-[a-z0-9]+\.onrender\.com$/, // Render deployment
+    /^https?:\/\/hurtsproject\.(netlify|vercel)\.app$/, // Netlify/Vercel frontend
+    /^https?:\/\/.*\.vercel\.app$/ // All Vercel previews
+];
+
 const corsOptions = {
-    origin: [
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        'http://localhost:5000',
-        'http://127.0.0.1:5000',
-        'http://localhost:5173', // Vite frontend
-        'http://127.0.0.1:5173', // Vite frontend
-        /^https?:\/\/disaster-management-[a-z0-9]+\.railway\.app$/, // Railway deployment
-        /^https?:\/\/disaster-management-[a-z0-9]+-[a-z0-9]+\.railway\.app$/, // Railway previews
-        /^https?:\/\/.*\.onrender\.com$/, // All Render subdomains
-        /^https?:\/\/disaster-management-[a-z0-9]+\.onrender\.com$/, // Specific Render deployment
-        'https://hurtsproject.netlify.app' // Netlify frontend
-    ],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // Check if the origin is in the allowed list
+        if (allowedOrigins.some(regex => {
+            if (typeof regex === 'string') {
+                return regex === origin;
+            } else if (regex instanceof RegExp) {
+                return regex.test(origin);
+            }
+            return false;
+        })) {
+            return callback(null, true);
+        }
+        
+        console.log('CORS blocked for origin:', origin);
+        return callback(new Error('Not allowed by CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true,
