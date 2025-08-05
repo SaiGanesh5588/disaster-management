@@ -27,10 +27,20 @@ export const apiRequest = async (endpoint, options = {}) => {
   };
 
   // Handle request body
-  const body = options.body ? JSON.stringify(options.body) : undefined;
+  let body;
+  if (options.body) {
+    // If body is already a string, use it as is, otherwise stringify it
+    body = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
+  } else {
+    body = undefined;
+  }
 
   try {
-    console.log(`API Request: ${options.method || 'GET'} ${url}`);
+    console.log(`API Request: ${options.method || 'GET'} ${url}`, {
+      method: options.method || 'GET',
+      headers,
+      body: body ? JSON.parse(body) : undefined
+    });
     
     const response = await fetch(url, {
       ...options,

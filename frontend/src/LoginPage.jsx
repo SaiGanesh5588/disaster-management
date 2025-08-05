@@ -24,7 +24,7 @@ const LoginPage = () => {
     try {
       await apiRequest("/api/auth/forgot-password", {
         method: "POST",
-        body: JSON.stringify({ email }),
+        body: { email },
       });
       
       alert("Password reset link has been sent to your email address!");
@@ -51,7 +51,7 @@ const LoginPage = () => {
       try {
         const data = await apiRequest("/api/signup", {
           method: "POST",
-          body: JSON.stringify({ name, email, password }),
+          body: { name, email, password },
         });
 
         if (data.token) {
@@ -74,7 +74,7 @@ const LoginPage = () => {
       try {
         const data = await apiRequest("/api/login", {
           method: "POST",
-          body: JSON.stringify({ email, password }),
+          body: { email, password },
         });
 
         if (data.token) {

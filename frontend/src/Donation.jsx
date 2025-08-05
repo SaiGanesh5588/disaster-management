@@ -162,14 +162,24 @@ const Donation = () => {
     setLoading(true);
     
     try {
+      // Convert amount and quantity to numbers if they exist
+      const submissionData = {
+        ...formData,
+        amount: formData.amount ? parseFloat(formData.amount) : undefined,
+        quantity: formData.quantity ? parseInt(formData.quantity, 10) : undefined,
+      };
+
+      console.log("Submitting donation:", submissionData);
+      
       const data = await apiRequest("/api/donations", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: submissionData,
       });
 
       console.log("Response from server:", data);
       alert("🎉 Thank you for your generous donation! Your contribution will make a real difference in helping those in need.");
       
+      // Reset form
       setFormData({
         name: "",
         donationType: "",
